@@ -4,15 +4,15 @@ import outcomeImg from '../../assets/outcome.svg';
 import closeImg from '../../assets/close.svg';
 import { FormEvent, useState } from 'react';
 import { Container, RadioBox, TransactionTypeContainer } from './styles';
-import { api } from '../../services/api';
+import { useTransactions } from '../../hooks/Transactions';
 
 export const NewTransactionModal = () => {
     const [ isNewTransactionModalOpen, setIsNewTransactionModalOpen ] = useState( false );
     const [ type, setType ] = useState( 'deposit' );
-
     const [ title, setTitle ] = useState( '' );
-    const [ value, setValue ] = useState( 0 );
+    const [ amount, setAmount ] = useState( 0 );
     const [ category, setCategory ] = useState( '' );
+    const { addTransaction } = useTransactions();
 
     function handleOpenNewTransactionModal() {
         setIsNewTransactionModalOpen( true );
@@ -22,16 +22,20 @@ export const NewTransactionModal = () => {
         setIsNewTransactionModalOpen( false );
     }
 
-    function handleCreateNewTransaction(event: FormEvent) {
+    async function handleCreateNewTransaction(event: FormEvent) {
         event.preventDefault();
-        const data = {
+        await addTransaction( {
             title,
-            value,
+            amount,
             category,
             type,
-        };
+        } );
 
-        api.post( '/transactions', data );
+        setTitle( '' );
+        setAmount( 0 );
+        setCategory( '' );
+        setType( 'deposit' );
+        handleCloseNewTransactionModal();
     }
 
     return (
@@ -60,8 +64,8 @@ export const NewTransactionModal = () => {
                         />
                         <input
                                 placeholder="Valor" type="number"
-                                value={ value }
-                                onChange={ event => setValue( Number( event.target.value ) ) }
+                                value={ amount }
+                                onChange={ event => setAmount( Number( event.target.value ) ) }
                         />
 
                         <TransactionTypeContainer>

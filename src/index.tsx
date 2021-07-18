@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { createServer, Model } from 'miragejs';
 import { App } from './App';
+import { Providers } from './hooks';
 
 createServer( {
     models: {
@@ -42,7 +43,9 @@ createServer( {
 
 ReactDOM.render(
         <React.StrictMode>
-            <App/>
+            <Providers>
+                <App/>
+            </Providers>
         </React.StrictMode>,
         document.getElementById( 'root' ),
 );
